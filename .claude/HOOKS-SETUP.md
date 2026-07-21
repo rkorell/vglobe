@@ -2,21 +2,31 @@
 
 Stand: 2026-07-21
 
-Dieses Dokument beschreibt die Installation der Budget-Hooks im Projekt
-`vglobe` und die Verdrahtung mit der bestehenden Claude-Code-Statuszeile.
+Dieses Dokument beschreibt die Installation der Budget-Hooks auf **Benutzer-
+ebene** (`/home/pi/.claude/`) und die Verdrahtung mit der bestehenden
+Claude-Code-Statuszeile.
+
+> **Hinweis zum Ort:** Die Hooks lagen zunächst projektlokal unter
+> `/home/pi/vglobe/.claude/`. Das Token-Kontingent ist jedoch **kontoweit**;
+> projektlokale Hooks würden nur Sessions schützen, deren Projektwurzel genau
+> dieses Verzeichnis ist. Da hier grundsätzlich aus `/home/pi` heraus
+> gearbeitet wird, sind die Hooks auf die Benutzerebene `/home/pi/.claude/`
+> verschoben und gelten damit für **jede** Session. Im Repo `vglobe` bleibt
+> nur noch dieses Dokument als Beschreibung.
 
 ## Was wurde wo installiert
 
 | Datei | Zweck |
 |---|---|
-| `/home/pi/vglobe/.claude/settings.json` | Hook-Registrierung (SessionStart, PostToolUse, PreToolUse) auf Projektebene |
-| `/home/pi/vglobe/.claude/hooks/budget_common.py` | Gemeinsame Logik, liest `~/.claude/usage-block.json` |
-| `/home/pi/vglobe/.claude/hooks/budget-soft.py` | PostToolUse-Hook, warnt einmalig ab 78 % |
-| `/home/pi/vglobe/.claude/hooks/budget-hard.py` | PreToolUse-Hook, sperrt Schreibwerkzeuge ab 90 % (Ausnahme: `PROGRESS.md`, `DECISIONS.md`) |
-| `/home/pi/vglobe/.claude/hooks/session-context.py` | SessionStart-Hook, blendet Projektzustand ein |
-| `/home/pi/vglobe/README.md` | Bundle-Beschreibung |
+| `/home/pi/.claude/settings.json` | Hook-Registrierung (SessionStart, PostToolUse, PreToolUse) auf Benutzerebene, additiv neben den bestehenden Einträgen |
+| `/home/pi/.claude/hooks/budget_common.py` | Gemeinsame Logik, liest `~/.claude/usage-block.json` |
+| `/home/pi/.claude/hooks/budget-soft.py` | PostToolUse-Hook, warnt einmalig ab 78 % |
+| `/home/pi/.claude/hooks/budget-hard.py` | PreToolUse-Hook, sperrt Schreibwerkzeuge ab 90 % (Ausnahme: `PROGRESS.md`, `DECISIONS.md`) |
+| `/home/pi/.claude/hooks/session-context.py` | SessionStart-Hook, blendet Projektzustand ein |
 
-Alle Hook-Skripte sind ausführbar (`chmod +x`).
+Alle Hook-Skripte sind ausführbar (`chmod +x`). Die Kommandopfade in der
+`settings.json` sind absolut (`/home/pi/.claude/hooks/...`), damit sie
+unabhängig von der jeweiligen Projektwurzel funktionieren.
 
 Die Budget-Hooks berechnen den Verbrauch **nicht selbst**. Sie lesen ihn aus
 der Cache-Datei `~/.claude/usage-block.json`. Diese wird von der Statuszeile
@@ -117,10 +127,14 @@ diese Ausnahme könnte die Session ihren eigenen Zustand nicht mehr sichern.
 
 ## Rückbau in drei Schritten
 
-1. **Hooks deregistrieren:** `/home/pi/vglobe/.claude/settings.json` löschen
-   oder den `hooks`-Block daraus entfernen. Die Skripte unter
-   `/home/pi/vglobe/.claude/hooks/` können liegen bleiben (ohne Registrierung
-   wirkungslos) oder ebenfalls entfernt werden.
+1. **Hooks deregistrieren:** In `/home/pi/.claude/settings.json` aus dem
+   `hooks`-Block die drei Einträge entfernen — die zweite `SessionStart`-Gruppe
+   (`session-context.py`), `PostToolUse` (`budget-soft.py`) und `PreToolUse`
+   (`budget-hard.py`). **Den vorhandenen memex-`SessionStart`-Eintrag und alle
+   übrigen Einstellungen unangetastet lassen.** Alternativ die Sicherung
+   zurückspielen: `cp /home/pi/.claude/settings.json.bak-2026-07-21 /home/pi/.claude/settings.json`.
+   Die Skripte unter `/home/pi/.claude/hooks/` können liegen bleiben (ohne
+   Registrierung wirkungslos) oder entfernt werden.
 2. **Statuszeile zurücksetzen:** Original wiederherstellen:
    `cp /home/pi/.claude/statusline-command.sh.bak-2026-07-21 /home/pi/.claude/statusline-command.sh`
    (oder den Block zwischen `# --- Budget-Cache …` und `# --- Ende Budget-Cache ---`
