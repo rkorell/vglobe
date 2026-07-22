@@ -1,0 +1,5 @@
+# Prozess-/Infrastruktur-Artefakte (nicht Teil des Programms)
+.claude/
+PROGRESS.md
+DECISIONS.md
+docs/HOOKS.md
