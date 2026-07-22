@@ -85,9 +85,13 @@ App. Inhalt unverändert nach `docs/HOOKS.md` verschoben; README.md
 beschreibt die App (Vorgabe „README.md vollständig gepflegt").
 
 ### E-08 — Erdtextur
-NASA Blue Marble (world.topo.bathy, Juli), auf 4096×2048 skaliert, JPEG —
-Ausgangswert übernommen. Obergrenze 8192×4096 wird in
-`src/data/config.mjs` als `maxResolutionWidth/Height` geführt und beim
-Laden geprüft.
+NASA Blue Marble Next Generation **mit Topografie und Bathymetrie**
+(`world.topo.bathy.200407`, Juli, Record 73751 auf eoimages.gsfc.nasa.gov),
+Quelle 5400×2700, auf 4096×2048 skaliert, JPEG. Gegenüber dem Ausgangswert
+`land_shallow_topo` bewusst die Bathymetrie-Variante gewählt: Sie zeigt die
+Meeresboden-Struktur (mittelozeanische Rücken, Tiefseebecken, Schelfe)
+statt gleichförmig blauer Ozeane. Juli-Monat wegen begrünter
+Nordhalbkugel. Obergrenze 8192×4096 wird in `src/data/config.mjs` als
+`maxResolutionWidth/Height` geführt und beim Laden geprüft.
 
 Stand: 2026-07-22

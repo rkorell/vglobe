@@ -4,6 +4,8 @@
 // buergerlichen/nautischen/astronomischen Daemmerungsgrenzen.
 // Monoton fallend in der Sonnenhoehe, stetig, deterministisch.
 // Modified: [2026-07-22 21:56] - Erstellt (AP-03)
+// Modified: [2026-07-22 23:20] - Daemmerungskurve steiler (civil 0.75, nautical 0.95), Terminator besser erkennbar
+// Modified: [2026-07-22 23:40] - Smoothstep-Interpolation zwischen den Stuetzstellen (sichtbarer Knick am Terminator)
 
 export const TWILIGHT_MARKS = {
   terminator: -0.833,
@@ -16,8 +18,8 @@ export const TWILIGHT_MARKS = {
 // Zwischen den Stuetzstellen wird linear interpoliert.
 const NIGHT_CURVE = [
   [TWILIGHT_MARKS.terminator, 0.0],
-  [TWILIGHT_MARKS.civil, 0.45],
-  [TWILIGHT_MARKS.nautical, 0.8],
+  [TWILIGHT_MARKS.civil, 0.75],
+  [TWILIGHT_MARKS.nautical, 0.95],
   [TWILIGHT_MARKS.astronomical, 1.0]
 ];
 
@@ -30,7 +32,8 @@ export function nightFactor(sunAltitudeDeg) {
     const [a2, f2] = NIGHT_CURVE[i];
     if (sunAltitudeDeg > a2) {
       const t = (a1 - sunAltitudeDeg) / (a1 - a2);
-      return f1 + (f2 - f1) * t;
+      const s = t * t * (3 - 2 * t); // Smoothstep: knickfrei an den Grenzen
+      return f1 + (f2 - f1) * s;
     }
   }
   return 1;

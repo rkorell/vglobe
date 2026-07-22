@@ -1,0 +1,187 @@
+/* (c) Dr. Ralf Korell */
+/* Globe - Oberflaeche im Korell-Stil (FA-9): blaues Farbschema,
+   CSS-Custom-Properties in :root, Look der Fleet-Webapps. */
+/* Modified: [2026-07-22 22:18] - Erstellt (AP-06) */
+
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-card: #1a1a25;
+  --text-primary: #f0f0f5;
+  --text-secondary: #a0a0b0;
+  --text-muted: #606070;
+  --accent: #4a90d9;
+  --accent-glow: rgba(74, 144, 217, 0.3);
+  --border-color: #2a2a3a;
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+#globe-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+  touch-action: none;
+}
+
+#globe-canvas:active { cursor: grabbing; }
+
+.dashboard {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  width: 17rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 10;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  box-shadow: 0 4px 16px var(--shadow-color);
+}
+
+.logo { height: 2.2rem; width: auto; }
+.logo-large { height: 4rem; width: auto; margin-bottom: 0.8rem; }
+
+.dashboard-header h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 0.8rem 0.9rem;
+  box-shadow: 0 4px 16px var(--shadow-color);
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.card-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.time-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+#time-display {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.badge {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 1rem;
+  background: var(--accent-glow);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+button {
+  align-self: flex-start;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.35rem 1rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: filter var(--transition-fast);
+}
+
+button:hover { filter: brightness(1.15); }
+
+.dashboard-footer {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 15, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  transition: opacity var(--transition-normal);
+}
+
+#overlay.hidden { opacity: 0; pointer-events: none; }
+
+.overlay-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 1.5rem 2.5rem;
+  box-shadow: 0 0 40px var(--accent-glow);
+  max-width: 32rem;
+  text-align: center;
+}
+
+#overlay-text { color: var(--text-secondary); line-height: 1.5; }
+
+#overlay.error .overlay-box { border-color: #d9534a; }
+#overlay.error #overlay-text { color: #e8a09a; }
+
+/* Modified: [2026-07-22 23:26] - check-row fuer Kuestenlinien-Toggle */
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.check-row input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+}

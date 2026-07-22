@@ -2,6 +2,7 @@
 // Globe - Tests: Laden und Validierung der Kuestenliniendaten sowie
 // Importierbarkeit der Datenschicht ohne Browser-Globals.
 // Modified: [2026-07-22 22:02] - Erstellt (AP-04)
+// Modified: [2026-07-23 00:02] - Tests fuer kinds-Feld (Kueste/Grenze)
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -22,6 +23,19 @@ test('Kuestenlinien-Asset laedt und validiert (Natural Earth 1:50m)', async () =
   assert.ok(c.lineCount > 1000, `nur ${c.lineCount} Linien`);
   assert.ok(c.pointCount > 50000, `nur ${c.pointCount} Punkte`);
   assert.match(c.source, /Natural Earth/);
+});
+
+test('Asset enthaelt Ebenen-Kennung kinds (Kueste und Grenze)', async () => {
+  const c = await loadCoastlines(COASTLINE_CONFIG.defaultPath, nodeLoader);
+  assert.ok(Array.isArray(c.kinds), 'kinds fehlt');
+  assert.equal(c.kinds.length, c.lineCount);
+  assert.ok(c.kinds.some((k) => k === 0), 'keine Kuestenlinie (kind 0)');
+  assert.ok(c.kinds.some((k) => k === 1), 'keine Grenze (kind 1)');
+});
+
+test('parseCoastlines: kinds-Laenge muss zu lines passen', () => {
+  const bad = JSON.stringify({ lines: [[[0, 0], [1, 1]]], kinds: [0, 1] });
+  assert.throws(() => parseCoastlines(bad), CoastlinesError);
 });
 
 test('parseCoastlines: kaputtes JSON wird abgewiesen', () => {

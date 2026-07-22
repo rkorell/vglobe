@@ -3,6 +3,7 @@
 // (Natural Earth 1:50m, siehe tools/prepare_coastlines.mjs).
 // Keine Browser-APIs auf Modulebene; in Node ohne Browser importierbar.
 // Modified: [2026-07-22 22:01] - Erstellt (AP-04)
+// Modified: [2026-07-22 23:56] - Optionales kinds-Feld (Kueste/Grenze) validieren
 
 import { COASTLINE_CONFIG } from './config.mjs';
 
@@ -62,9 +63,25 @@ export function parseCoastlines(text, path = '(inline)') {
       pointCount++;
     }
   }
+  // Optionale Ebenen-Kennung je Polylinie (0 = Kueste, 1 = Grenze).
+  let kinds = null;
+  if (data.kinds !== undefined) {
+    if (!Array.isArray(data.kinds) || data.kinds.length !== data.lines.length) {
+      throw new CoastlinesError(
+        `Kuestenlinien ${path}: "kinds" muss so lang sein wie "lines"`);
+    }
+    for (const k of data.kinds) {
+      if (typeof k !== 'number' || !Number.isFinite(k)) {
+        throw new CoastlinesError(`Kuestenlinien ${path}: ungueltiger kind-Wert`);
+      }
+    }
+    kinds = data.kinds;
+  }
+
   return {
     source: typeof data.source === 'string' ? data.source : 'unbekannt',
     lines: data.lines,
+    kinds,
     lineCount: data.lines.length,
     pointCount
   };

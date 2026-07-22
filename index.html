@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<!-- (c) Dr. Ralf Korell -->
+<!-- Globe - 3D-Erdglobus mit astronomisch korrektem Terminator -->
+<!-- Modified: [2026-07-22 22:17] - Erstellt (AP-06) -->
+<!-- Modified: [2026-07-22 23:23] - Checkbox Kuestenlinien ein/aus ergaenzt -->
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Globe — Korell</title>
+  <link rel="icon" href="assets/logo/rk_wolf.png">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./vendor/three/three.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <canvas id="globe-canvas"></canvas>
+
+  <aside class="dashboard">
+    <header class="dashboard-header">
+      <img src="assets/logo/rk_wolf.png" alt="rK-Wolf" class="logo">
+      <h1>Globe</h1>
+    </header>
+
+    <section class="card">
+      <div class="card-title">Zeitpunkt (UTC)</div>
+      <div class="time-row">
+        <span id="time-display">—</span>
+        <span id="time-mode" class="badge">Echtzeit</span>
+      </div>
+      <input type="range" id="time-slider" min="-527040" max="527040" step="15" value="0"
+             aria-label="UTC-Zeitpunkt, Minuten relativ zu jetzt">
+      <button id="time-now" type="button">Jetzt</button>
+    </section>
+
+    <section class="card">
+      <div class="card-title">Nachtseite</div>
+      <div class="time-row">
+        <span>Helligkeit</span>
+        <span id="night-value">8 %</span>
+      </div>
+      <input type="range" id="night-slider" min="0.03" max="0.25" step="0.005" value="0.08"
+             aria-label="Grundaufhellung der Nachtseite">
+      <label class="check-row">
+        <input type="checkbox" id="coastline-toggle" checked>
+        <span>Küstenlinien anzeigen</span>
+      </label>
+    </section>
+
+    <footer class="dashboard-footer">&copy; Dr. Ralf Korell</footer>
+  </aside>
+
+  <div id="overlay">
+    <div class="overlay-box">
+      <img src="assets/logo/rk_wolf.png" alt="" class="logo-large">
+      <div id="overlay-text">Lade …</div>
+    </div>
+  </div>
+
+  <script type="module" src="src/main.mjs"></script>
+</body>
+</html>
